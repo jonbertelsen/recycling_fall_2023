@@ -55,13 +55,25 @@ public class WasteTruckDAOImpl implements IWasteTruckDAO
     @Override
     public void setWasteTruckAvailable(WasteTruck wasteTruck, boolean available)
     {
-
+        try (EntityManager em = emf.createEntityManager())
+        {
+            em.getTransaction().begin();
+                WasteTruck wasteTruckToUpdate = em.find(WasteTruck.class, wasteTruck.getId());
+                wasteTruckToUpdate.setAvailable(available);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
     public void deleteWasteTruck(int id)
     {
-
+        try (EntityManager em = emf.createEntityManager())
+        {
+            em.getTransaction().begin();
+            WasteTruck wasteTruck = em.find(WasteTruck.class, id);
+            em.remove(wasteTruck);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
@@ -78,9 +90,16 @@ public class WasteTruckDAOImpl implements IWasteTruckDAO
     }
 
     @Override
-    public void removeDriverFromWasteTruck(WasteTruck wasteTruck, String id)
+    public void removeDriverFromWasteTruck(WasteTruck wasteTruck, String driverId)
     {
-
+        try (EntityManager em = emf.createEntityManager())
+        {
+            em.getTransaction().begin();
+                wasteTruck = em.find(WasteTruck.class, wasteTruck.getId());
+                Driver driver = em.find(Driver.class, driverId);
+                wasteTruck.removeDriver(driver);
+            em.getTransaction().commit();
+        }
     }
 
     @Override

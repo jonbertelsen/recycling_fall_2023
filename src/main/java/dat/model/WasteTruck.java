@@ -46,5 +46,14 @@ public class WasteTruck
         }
     }
 
+    public void removeDriver(Driver driver)
+    {
+        this.drivers.remove(driver);
+        if (driver != null)
+        {
+            driver.setWasteTruck(null);
+        }
+    }
+
 
 }

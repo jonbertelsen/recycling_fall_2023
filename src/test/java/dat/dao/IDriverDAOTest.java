@@ -2,6 +2,7 @@ package dat.dao;
 
 import dat.config.HibernateConfig;
 import dat.model.Driver;
+import dat.model.WasteTruck;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
@@ -14,6 +15,7 @@ class IDriverDAOTest
 {
     private static EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryConfig("recycling");
     private static IDriverDAO driverDAO = DriverDAOImpl.getInstance(emf);
+    private static IWasteTruckDAO wasteTruckDAO = WasteTruckDAOImpl.getInstance(emf);
 
     @BeforeAll
     static void beforeAll()
@@ -82,5 +84,23 @@ class IDriverDAOTest
     {
         Driver d = driverDAO.fetchDriverWithHighestSalary();
         assertEquals("William", d.getName());
+    }
+
+    @Test
+    void setWasteTruckAvailable()
+    {
+        WasteTruck wasteTruck = wasteTruckDAO.getWasteTruckById(1); // Volvo
+        wasteTruckDAO.setWasteTruckAvailable(wasteTruck, false);
+        wasteTruck = wasteTruckDAO.getWasteTruckById(1);
+        assertEquals(false, wasteTruck.isAvailable());
+    }
+
+    @Test
+    void removeDriverFromWasteTruck()
+    {
+        WasteTruck wasteTruck = wasteTruckDAO.getWasteTruckById(3); // Mercedes
+        wasteTruckDAO.removeDriverFromWasteTruck(wasteTruck, "211104-CE-572S");  // Charlie
+        Driver driver = driverDAO.getDriverById("211104-CE-572S");
+        assertNull(driver.getWasteTruck());
     }
 }
